@@ -14,10 +14,6 @@
   --serif:"Noto Serif TC","Songti TC",serif; --sans:"Noto Sans TC","PingFang TC",system-ui,sans-serif;
   --lo:"Charis SIL","Gentium Plus","Times New Roman",serif;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141922; --paper:#1c2330; --ink:#ece9e2; --muted:#a3a9b5; --line:#2f3847;
-  --indigo:#8db6ee; --indigo-2:#1f3150; --brick:#f08a80; --brick-2:#3a2422; --gold:#e8bd5a;
-  --ok:#7fcf98; --ok-2:#1d3526; --bad:#f08a80; --bag-w:#1c2330; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141922; --paper:#1c2330; --ink:#ece9e2; --muted:#a3a9b5; --line:#2f3847;
   --indigo:#8db6ee; --indigo-2:#1f3150; --brick:#f08a80; --brick-2:#3a2422; --gold:#e8bd5a;
@@ -386,16 +382,16 @@ const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v)
 let DATA,ITEMS,CATS,byId={};
 let state={cat:'all',q:'',feat:false,audio:false,hideSens:true,shown:30};
 let picked=store.get('tsl-picked',[]);
-/* 深色／淺色切換：記住選擇；沒選過就跟著系統 */
+/* 深色／淺色切換：預設淺色，按了才變深色，會記住選擇 */
 (function(){const root=document.documentElement,btn=document.getElementById('themeBtn');
   const sun='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>';
   const moon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
   let saved=null;try{saved=localStorage.getItem('tsl-theme')}catch(e){}
   if(saved==='dark'||saved==='light')root.setAttribute('data-theme',saved);
-  const isDark=()=>root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark=()=>root.getAttribute('data-theme')==='dark';
   const draw=()=>{btn.innerHTML=isDark()?sun+'淺色模式':moon+'深色模式'};
   btn.addEventListener('click',()=>{const t=isDark()?'light':'dark';root.setAttribute('data-theme',t);try{localStorage.setItem('tsl-theme',t)}catch(e){}draw()});
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);draw();})();
+  draw();})();
 const audio=new Audio();
 let voice=store.get('tsl-voice','m');
 const src=it=>voice==='f'?(it.audioF||it.audio):(it.audio||it.audioF);
