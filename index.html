@@ -5,42 +5,47 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&family=Charis+SIL:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
-/* 版面：藍染布頭＋紅磚印章，俗諺卡像一張張字帖；投影模式全螢幕大字 */
+/* 版面：茄芷袋（紅白藍綠條紋）＋藍色雙框大標；俗諺卡像一張張字帖；投影模式全螢幕大字 */
 :root{
-  --bg:#f3f1ec; --paper:#fbfaf7; --ink:#1f2633; --muted:#5d6472; --line:#d9d5cc;
-  --indigo:#23406b; --indigo-2:#e3e9f2; --brick:#a8442e; --brick-2:#f4e3dc; --gold:#b98a2b;
-  --ok:#2f6f4f; --ok-2:#e1efe7; --bad:#a8442e;
+  --bg:#f6f4ee; --paper:#ffffff; --ink:#1d2430; --muted:#5b6270; --line:#dcd8ce;
+  --indigo:#2b66b1; --indigo-2:#e2ecf8; --brick:#d23f3a; --brick-2:#fbe5e3; --gold:#e0a21e;
+  --ok:#2c9150; --ok-2:#e0f2e6; --bad:#d23f3a;
+  --bag-r:#e04a44; --bag-b:#3a7cc8; --bag-g:#43a85a; --bag-w:#ffffff;
   --serif:"Noto Serif TC","Songti TC",serif; --sans:"Noto Sans TC","PingFang TC",system-ui,sans-serif;
   --lo:"Charis SIL","Gentium Plus","Times New Roman",serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#141922; --paper:#1c2330; --ink:#ece9e2; --muted:#a3a9b5; --line:#2f3847;
-  --indigo:#8fb0de; --indigo-2:#22324a; --brick:#e08b73; --brick-2:#3a2621; --gold:#d8b25e;
-  --ok:#7fc8a0; --ok-2:#1f3529; --bad:#e08b73; color-scheme:dark}}
+  --indigo:#8db6ee; --indigo-2:#1f3150; --brick:#f08a80; --brick-2:#3a2422; --gold:#e8bd5a;
+  --ok:#7fcf98; --ok-2:#1d3526; --bad:#f08a80; --bag-w:#1c2330; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141922; --paper:#1c2330; --ink:#ece9e2; --muted:#a3a9b5; --line:#2f3847;
-  --indigo:#8fb0de; --indigo-2:#22324a; --brick:#e08b73; --brick-2:#3a2621; --gold:#d8b25e;
-  --ok:#7fc8a0; --ok-2:#1f3529; --bad:#e08b73; color-scheme:dark}
+  --indigo:#8db6ee; --indigo-2:#1f3150; --brick:#f08a80; --brick-2:#3a2422; --gold:#e8bd5a;
+  --ok:#7fcf98; --ok-2:#1d3526; --bad:#f08a80; --bag-w:#1c2330; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+#quiz:focus,#stage:focus{outline:none}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* 茄芷袋條紋帶 */
+.bagband{height:42px;background:
+  linear-gradient(var(--bag-r) 0 11px,var(--bag-w) 11px 14px,var(--bag-b) 14px 25px,var(--bag-w) 25px 28px,var(--bag-g) 28px 39px,var(--bag-w) 39px 42px);
+  -webkit-mask:repeating-linear-gradient(90deg,#000 0 46px,rgba(0,0,0,.82) 46px 48px);mask:repeating-linear-gradient(90deg,#000 0 46px,rgba(0,0,0,.82) 46px 48px)}
 
 /* 頁首 */
-header.top{background:var(--indigo);color:#fff;margin-top:calc(-1*env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);
-  background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 2px,transparent 2px 9px),repeating-linear-gradient(0deg,rgba(255,255,255,.04) 0 2px,transparent 2px 9px)}
-:root[data-theme="dark"] header.top{background-color:#1b2a44}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) header.top{background-color:#1b2a44}}
+header.top{background:var(--paper);color:var(--ink);margin-top:calc(-1*env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px)}
 .top .wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding-block:22px 0}
-.seal{width:62px;height:62px;flex:none;border:3px solid #e9a08a;border-radius:6px;color:#f6d2c6;font-family:var(--serif);font-weight:900;font-size:22px;line-height:1.05;display:grid;grid-template-columns:1fr 1fr;place-items:center;padding:4px;transform:rotate(-4deg)}
-.brand h1{margin:0;font-family:var(--serif);font-weight:900;font-size:clamp(28px,4vw,40px);letter-spacing:.06em;text-wrap:balance}
-.brand p{margin:2px 0 0;color:#cfdaea;font-size:15px}
-nav.tabs{display:flex;gap:4px;width:100%;margin-top:14px;overflow-x:auto}
-nav.tabs a{color:#dfe7f2;text-decoration:none;padding:10px 18px;border-radius:10px 10px 0 0;font-weight:700;white-space:nowrap}
-nav.tabs a[aria-current="page"]{background:var(--bg);color:var(--indigo)}
+.seal{width:64px;height:64px;flex:none;border:3px solid var(--brick);border-radius:8px;color:var(--brick);font-family:var(--serif);font-weight:900;font-size:22px;line-height:1.05;display:grid;grid-template-columns:1fr 1fr;place-items:center;padding:4px;transform:rotate(-4deg);background:var(--paper)}
+.brand h1{margin:0;font-family:var(--sans);font-weight:700;font-size:clamp(34px,5.2vw,58px);letter-spacing:.08em;line-height:1.1;text-wrap:balance;
+  color:var(--bag-b);-webkit-text-stroke:0;text-shadow:0 0 0 var(--bag-b),2px 2px 0 var(--paper),4px 4px 0 var(--bag-b)}
+.brand p{margin:8px 0 0;color:var(--muted);font-size:15px;font-family:var(--serif)}
+.brand p b{color:var(--brick);font-weight:700}
+nav.tabs{display:flex;gap:6px;width:100%;margin-top:16px;overflow-x:auto}
+nav.tabs a{color:var(--indigo);text-decoration:none;padding:10px 18px;border-radius:12px 12px 0 0;font-weight:700;white-space:nowrap;border:2px solid transparent;border-bottom:0}
+nav.tabs a[aria-current="page"]{background:var(--bg);color:var(--brick);border-color:var(--line)}
 
 main{padding-block:24px 60px}
 .view[hidden]{display:none}
@@ -57,10 +62,13 @@ main{padding-block:24px 60px}
 .toggles label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .toggles input{width:18px;height:18px;accent-color:var(--brick)}
 .count{color:var(--muted);font-size:15px}
+.help{color:var(--indigo);font-size:15px;align-self:center}
 
 /* 卡片 */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;cursor:zoom-in;transition:border-color .15s,box-shadow .15s}
+.card{position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--bag-r) 0 33%,var(--bag-b) 33% 66%,var(--bag-g) 66%)}
 .card:hover{border-color:var(--indigo);box-shadow:0 4px 18px rgba(35,64,107,.12)}
 .card .zoom{font-size:13px;color:var(--muted)}
 .voice{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper)}
@@ -91,6 +99,7 @@ main{padding-block:24px 60px}
 
 /* 投影大字 */
 .stage{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 16px) max(20px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(20px,env(safe-area-inset-left,0px))}
+.stage::after,#quiz.full::after{content:"";position:fixed;left:0;right:0;bottom:0;height:12px;background:linear-gradient(90deg,var(--bag-r) 0 33.3%,var(--bag-b) 33.3% 66.6%,var(--bag-g) 66.6%);pointer-events:none}
 .stage .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .stage .body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3vh;text-align:center;min-height:0}
 .stage{--z:1}
@@ -191,10 +200,13 @@ footer a{color:var(--indigo)}
 @media print{
   body{background:#fff}
   header.top,nav,.no-print,footer,.view:not(#v-lesson){display:none!important}
+  main.wrap{padding:0!important;max-width:none}
+  #v-lesson{display:block!important}
   #v-lesson .two{display:block}
   #v-lesson .panel:first-child{display:none}
   .a4box{border:0;height:auto!important;overflow:visible}
-  .a4{transform:none!important;break-after:page}
+  .a4{transform:none!important;width:210mm;height:297mm;overflow:hidden;break-after:page}
+  .a4box:last-child .a4{break-after:auto}
   .sheets{display:block}
   @page{size:A4;margin:0}
 }
@@ -206,7 +218,7 @@ footer a{color:var(--indigo)}
     <div class="seal" aria-hidden="true"><span>俗</span><span>諺</span><span>台</span><span>語</span></div>
     <div class="brand">
       <h1>台語俗諺教案庫</h1>
-      <p>教育部臺灣台語常用詞辭典 388 則俗諺・標準台羅・真人錄音・帶領提問</p>
+      <p>教育部臺灣台語常用詞辭典 <b>388</b> 則俗諺・標準台羅・男聲真人錄音＋女聲合成・帶領提問</p>
     </div>
     <nav class="tabs" aria-label="主要區塊">
       <a href="#browse" data-v="browse">查俗諺</a>
@@ -215,6 +227,7 @@ footer a{color:var(--indigo)}
       <a href="#guide" data-v="guide">帶領方式</a>
     </nav>
   </div>
+  <div class="bagband" aria-hidden="true"></div>
 </header>
 
 <main class="wrap">
@@ -230,7 +243,7 @@ footer a{color:var(--indigo)}
       <div class="toggles">
         <label><input type="checkbox" id="fFeat"> 只看精選 60 則（有專屬提問）</label>
         <label><input type="checkbox" id="fAudio"> 只看有錄音</label>
-        <label><input type="checkbox" id="fSens" checked> 隱藏舊觀念條目</label>
+        <label><input type="checkbox" id="fSens" checked> 隱藏舊觀念條目</label> <a href="#guide" id="sensHelp" class="help">這是什麼？</a>
       </div>
       <div class="count" id="count"></div>
     </div>
@@ -252,7 +265,7 @@ footer a{color:var(--indigo)}
       <label>題數 <select id="gNum"><option>5</option><option selected>10</option><option>15</option></select></label>
       <button class="btn big primary" id="gStart" type="button">開始（全螢幕）</button>
     </div>
-    <div id="quiz"></div>
+    <div id="quiz" tabindex="-1"></div>
   </section>
 
   <!-- 排一堂課 -->
@@ -325,12 +338,24 @@ footer a{color:var(--indigo)}
       <h2>資料來源與授權</h2>
       <p>內容與錄音來自<a href="https://sutian.moe.edu.tw/" target="_blank" rel="noopener">教育部臺灣台語常用詞辭典</a>，依其創用 CC 姓名標示─禁止改作授權使用；資料整理參考 g0v <a href="https://github.com/g0v/moedict-data-twblg" target="_blank" rel="noopener">moedict-data-twblg</a>。女聲由<a href="https://hapsing.ithuan.tw/" target="_blank" rel="noopener">意傳科技台語語音合成</a>依辭典台羅產生。分類、精選與帶領提問由愛迪樂職能治療所整理。</p>
     </section>
+    <section id="old-views">
+      <h2>補充：什麼是「舊觀念條目」</h2>
+      <p>辭典的俗諺有些反映早年的觀念，現在帶活動用可能讓人不舒服或有爭議，所以標成「舊觀念」。「查俗諺」頁的「隱藏舊觀念條目」預設勾選，這些條目先不顯示，遊戲和「幫我挑 6 則」也不會抽到。</p>
+      <ul>
+        <li><b>貶低女性、重男輕女</b>：早年的擇偶、婚姻與財產觀念。</li>
+        <li><b>命相迷信</b>：斷掌、髮旋等說法，辭典本身也註明毫無根據、不宜輕信。</li>
+        <li><b>舊時教養方式</b>：提到打小孩、小孩不可插嘴。</li>
+        <li><b>罵人或自私的話</b>：含罵人用語或風涼話。</li>
+      </ul>
+      <p>想用時，把勾勾拿掉就會出現，每張卡片上有一行紅字說明原因。這些俗諺也很適合聊「以前和現在有什麼不一樣」，例如問長輩：「以前是不是真的這樣？您覺得現在還適用嗎？」</p>
+      <div class="tablewrap"><table id="sensTable"><tr><th>俗諺</th><th>留意的地方</th></tr></table></div>
+    </section>
   </section>
 </main>
 
 <footer class="wrap">資料：教育部臺灣台語常用詞辭典（CC BY-ND 3.0 TW）・整理：鍾孟修 職能治療師</footer>
 
-<div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-label="投影大字">
+<div class="stage" id="stage" hidden role="dialog" aria-modal="true" aria-label="投影大字" tabindex="-1">
   <div class="bar">
     <span class="count" id="stPos"></span>
     <span class="row"><span class="voiceslot"></span><button class="btn" id="stMinus" type="button" aria-label="字變小">A−</button><button class="btn" id="stPlus" type="button" aria-label="字變大">A＋</button><button class="btn" id="stClose" type="button">離開（Esc）</button></span>
@@ -362,10 +387,11 @@ let voice=store.get('tsl-voice','m');
 const src=it=>voice==='f'?(it.audioF||it.audio):(it.audio||it.audioF);
 const hasAudio=it=>!!(it&&(it.audio||it.audioF));
 const packs={};
-function packURL(f){const[k,o,l]=f;return(packs[k]||(packs[k]=fetch('packs/p'+k+'.mp3').then(r=>{if(!r.ok)throw new Error('pack');return r.arrayBuffer()}))).then(b=>URL.createObjectURL(new Blob([b.slice(o,o+l)],{type:'audio/mpeg'})))}
-let playTok=0;
+function packURL(f){const[k,o,l]=f;return(packs[k]||(packs[k]=fetch('packs/p'+k+'.mp3').then(r=>{if(!r.ok)throw new Error('pack');return r.arrayBuffer()}).catch(e=>{delete packs[k];throw e}))).then(b=>URL.createObjectURL(new Blob([b.slice(o,o+l)],{type:'audio/mpeg'})))}
+let playTok=0,lastBlob=null;
+function stopAudio(){playTok++;audio.pause()}
 function play(it){if(!hasAudio(it))return;const t=++playTok;audio.pause();
-  const go=u=>{if(t!==playTok)return;audio.src=u;audio.currentTime=0;audio.play().catch(()=>{})};
+  const go=u=>{if(t!==playTok){if(u.startsWith('blob:'))URL.revokeObjectURL(u);return}if(lastBlob)URL.revokeObjectURL(lastBlob);lastBlob=u.startsWith('blob:')?u:null;audio.src=u;audio.currentTime=0;audio.play().catch(()=>{})};
   const useF=voice==='f'?!!it.audioF:!it.audio;
   if(useF)packURL(it.audioF).then(go).catch(()=>{if(it.audio)go(it.audio)});else go(it.audio)}
 function voiceHTML(){return `<span class="voice" role="group" aria-label="聲音"><button type="button" data-voice="m" aria-pressed="${voice==='m'}">男聲・真人</button><button type="button" data-voice="f" aria-pressed="${voice==='f'}">女聲・AI</button></span>`}
@@ -381,6 +407,8 @@ fetch('data.json').then(r=>r.json()).then(d=>{
 
 /* ---------- 路由 ---------- */
 function route(){
+  if(!$('#stage').hidden)closeStage();
+  if($('#quiz').classList.contains('full'))exitFull();
   const v=(location.hash||'#browse').slice(1);
   const ok=['browse','play','lesson','guide'].includes(v)?v:'browse';
   $$('.view').forEach(s=>s.hidden=s.id!=='v-'+ok);
@@ -403,7 +431,7 @@ function catChips(){
 }
 function cardHTML(i){
   const on=picked.includes(i.id);
-  return `<article class="card" data-id="${i.id}">
+  return `<article class="card" data-id="${i.id}" tabindex="0" role="button" aria-label="放大：${esc(i.han)}">
     <div class="meta"><span><span class="tag">${CATS[i.cat]}</span> ${i.feat?'<span class="tag feat">精選</span>':''}</span><span class="zoom">點卡片放大　#${i.n}</span></div>
     <p class="han">${esc(i.han)}</p>
     <p class="lo">${esc(i.lo)}</p>
@@ -430,21 +458,25 @@ function initBrowse(){
   $('#fFeat').addEventListener('change',e=>{state.feat=e.target.checked;renderGrid()});
   $('#fAudio').addEventListener('change',e=>{state.audio=e.target.checked;renderGrid()});
   $('#fSens').addEventListener('change',e=>{state.hideSens=e.target.checked;catChips();renderGrid()});
+  $('#sensHelp').addEventListener('click',e=>{e.preventDefault();if(location.hash!=='#guide')history.pushState(null,'','#guide');route();requestAnimationFrame(()=>$('#old-views').scrollIntoView({block:'start'}))});
+  $('#sensTable').insertAdjacentHTML('beforeend',ITEMS.filter(i=>i.sens).map(i=>`<tr><td><b>${esc(i.han)}</b><br><span class="lo" style="font-size:15px">${esc(i.lo)}</span></td><td>${esc(i.sens)}</td></tr>`).join(''));
   $('#moreBtn').addEventListener('click',()=>{state.shown+=30;renderGrid()});
   $('#rand').addEventListener('click',()=>{const l=filtered();if(l.length)openStage(shuffle(l).slice(0,20),0)});
+  $('#grid').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList.contains('card')){e.preventDefault();const it=byId[e.target.dataset.id];openStage(LIST,LIST.indexOf(it))}});
   $('#grid').addEventListener('click',e=>{
     const c=e.target.closest('.card');if(!c)return;const it=byId[c.dataset.id];const a=e.target.closest('[data-act]');
     if(!a){if(e.target.closest('a'))return;openStage(LIST,LIST.indexOf(it));return}
     if(a.dataset.act==='play')play(it);
     if(a.dataset.act==='stage')openStage(LIST,LIST.indexOf(it));
-    if(a.dataset.act==='pick'){togglePick(it.id);c.outerHTML=cardHTML(it)}
+    if(a.dataset.act==='pick'){togglePick(it.id);const on=picked.includes(it.id);a.classList.toggle('on',on);a.textContent=on?'✓ 已加入課程':'＋ 加入課程'}
   });
 }
 function togglePick(id){picked=picked.includes(id)?picked.filter(x=>x!==id):[...picked,id];store.set('tsl-picked',picked)}
 
 /* ---------- 投影大字 ---------- */
 let SL=[],SI=0;
-function openStage(list,i){SL=list;SI=Math.max(0,i);$('#stage').hidden=false;document.body.style.overflow='hidden';drawStage()}
+let stageRet=null;
+function openStage(list,i){if(!list.length)return;stageRet=document.activeElement;SL=list;SI=Math.max(0,i);$('#stage').hidden=false;document.body.style.overflow='hidden';drawStage();$('#stage').focus()}
 function drawStage(){
   const it=SL[SI];$('#stPos').textContent=`${SI+1} / ${SL.length}　${CATS[it.cat]}`;
   $('#stHan').textContent=it.han;$('#stLo').textContent=it.lo;
@@ -452,7 +484,7 @@ function drawStage(){
   $('#stMean').hidden=true;$('#stQ').hidden=true;$('#stShow').textContent='看意思';
   $('#stPlay').disabled=!hasAudio(it);
 }
-function closeStage(){$('#stage').hidden=true;document.body.style.overflow='';audio.pause()}
+function closeStage(){$('#stage').hidden=true;document.body.style.overflow='';stopAudio();if(stageRet&&stageRet.focus)try{stageRet.focus()}catch(e){}stageRet=null}
 function stageShow(){const m=$('#stMean');if(m.hidden){m.hidden=false;$('#stShow').textContent='看提問'}else{$('#stQ').hidden=false}}
 $('#stClose').onclick=closeStage;
 let Z=store.get('tsl-zoom',1);const setZ=z=>{Z=Math.min(1.5,Math.max(.7,z));$('#stage').style.setProperty('--z',Z);store.set('tsl-zoom',Z)};setZ(Z);
@@ -464,9 +496,9 @@ $('#stShow').onclick=stageShow;
 addEventListener('keydown',e=>{
   if($('#stage').hidden)return;
   if(e.key==='Escape')closeStage();
-  else if(e.key==='ArrowRight')$('#stNext').click();
-  else if(e.key==='ArrowLeft')$('#stPrev').click();
-  else if(e.key===' '){e.preventDefault();stageShow()}
+  else if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();$('#stNext').click()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();$('#stPrev').click()}
+  else if(e.key===' '||(e.key==='Enter'&&e.target===$('#stage'))){e.preventDefault();stageShow()}
   else if(e.key==='p'||e.key==='P')play(SL[SI]);
   else if(e.key==='+'||e.key==='=')$('#stPlus').click();
   else if(e.key==='-')$('#stMinus').click();
@@ -491,10 +523,12 @@ function initPlay(){
   $('#quiz').addEventListener('click',onQuiz);
 }
 function distractors(it,field,src){
-  let others=src.filter(x=>x.id!==it.id&&x[field]&&x[field]!==it[field]);
-  if(others.length<2)others=ITEMS.filter(x=>x.id!==it.id&&!x.sens&&x[field]&&x[field]!==it[field]);
+  const okD=x=>x.id!==it.id&&x[field]&&x[field]!==it[field]&&x.mean!==it.mean&&(it.b==null||x.b!==it.b)&&(it.g==null||x.g!==it.g);
+  let others=src.filter(okD);
+  if(others.length<2)others=ITEMS.filter(x=>!x.sens&&okD(x));
   const L=it[field].length;others=shuffle(others).sort((x,y)=>Math.abs(x[field].length-L)-Math.abs(y[field].length-L));
-  return shuffle(others.slice(0,8)).slice(0,2);
+  const pick=[];for(const x of [...shuffle(others.slice(0,10)),...others.slice(10)]){if(pick.length===2)break;if(pick.some(p=>p[field]===x[field]||(p.g!=null&&p.g===x.g)))continue;pick.push(x)}
+  return pick;
 }
 function startGame(){
   let p=pool($('#gScope').value);
@@ -509,12 +543,13 @@ function startGame(){
 const qbar=()=>`<div class="qbar"><span class="voiceslot">${voiceHTML()}</span><span class="row"><button class="btn" data-q="zm" type="button" aria-label="字變小">A−</button><button class="btn" data-q="zp" type="button" aria-label="字變大">A＋</button><button class="btn" data-q="exit" type="button">離開全螢幕（Esc）</button></span></div>`;
 let QZ=store.get('tsl-qzoom',1);const setQZ=z=>{QZ=Math.min(1.4,Math.max(.7,z));$('#quiz').style.setProperty('--z',QZ);store.set('tsl-qzoom',QZ)};
 function enterFull(){const q=$('#quiz');q.classList.add('full');document.body.style.overflow='hidden';setQZ(QZ);try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();r&&r.catch&&r.catch(()=>{})}catch(e){}}
-function exitFull(){$('#quiz').classList.remove('full');document.body.style.overflow='';try{document.fullscreenElement&&document.exitFullscreen().catch(()=>{})}catch(e){}}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&$('#quiz').classList.contains('full'))exitFull()});
+function exitFull(){$('#quiz').classList.remove('full');document.body.style.overflow='';stopAudio();try{document.fullscreenElement&&document.exitFullscreen().catch(()=>{})}catch(e){}}
 const K='ㄅㄆㄇ'.split('');const KA=['1','2','3'];
 function drawQ(){
-  const q=G.qs[G.i];if(!q)return drawEnd();const it=q.it;
+  stopAudio();const q=G.qs[G.i];if(!q)return drawEnd();const it=q.it;
   let prompt='',hint='',serif=q.field!=='mean';
-  if(mode==='half'){prompt=`${esc(it.a)}，<span class="blank"></span>`;hint=it.kind==='xiehou'?'歇後語：猜後半句':'下半句是哪一個？'}
+  if(mode==='half'){prompt=`${esc(it.a)}${it.kind==='xiehou'?'──':'，'}<span class="blank"></span>`;hint=it.kind==='xiehou'?'歇後語：猜後半句':'下半句是哪一個？'}
   if(mode==='mean'){prompt=esc(it.han);hint='這句俗諺是什麼意思？'}
   if(mode==='find'){prompt=esc(it.mean);hint='哪一句俗諺在講這件事？'}
   if(mode==='ear'){prompt='🔊';hint='按「再聽一次」，選出您聽到的那句'}
@@ -526,8 +561,8 @@ function drawQ(){
     ${showPlay?`<div class="row" style="justify-content:center"><button class="btn big play" data-q="play" type="button">▶ ${mode==='ear'?'再聽一次':'聽錄音'}</button></div>`:''}
     <div class="opts">${q.opts.map((o,k)=>`<button class="opt ${serif?'serif':''}" type="button" data-q="ans" data-k="${k}"><span class="k">${KA[k]}</span><span>${esc(o[q.field])}</span></button>`).join('')}</div>
     <div id="rv"></div></div>`;
-  G.answered=false;
-  if(mode==='ear')setTimeout(()=>play(it),250);
+  G.answered=false;$('#quiz').focus({preventScroll:true});
+  if(mode==='ear'){const t=playTok;setTimeout(()=>{if(t===playTok)play(it)},250)}
 }
 function onQuiz(e){
   const b=e.target.closest('[data-q]');if(!b)return;const q=G&&G.qs[G.i];
@@ -557,7 +592,7 @@ addEventListener('keydown',e=>{
   if(!$('#stage').hidden||!G||$('#v-play').hidden||e.target.matches('input,select'))return;
   if(e.key==='Escape'&&$('#quiz').classList.contains('full')){exitFull();return}
   const k=KA.indexOf(e.key);if(k>=0){const b=$$('.opt')[k];if(b)b.click()}
-  if(e.key==='Enter'){const n=document.querySelector('[data-q="next"],[data-q="again"]');if(n){e.preventDefault();n.click()}}
+  if(e.key==='Enter'){const n=document.querySelector('[data-q="next"],[data-q="again"]');if(n){e.preventDefault();n.click()}else if($('#quiz').classList.contains('full')&&!e.target.closest('#quiz'))e.preventDefault()}
 });
 
 /* ---------- 排一堂課 ---------- */
