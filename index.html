@@ -157,14 +157,27 @@ ol.flow li b{color:var(--indigo)}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
 /* 學習單（A4） */
-.sheet{background:#fff;color:#1a1a1a;border:1px solid var(--line);border-radius:6px;padding:28px 30px;min-height:0;max-width:100%;font-size:13px}
-.sheet h4{font-family:var(--serif);font-size:22px;margin:0 0 4px}
-.sheet .sub{color:#555;margin:0 0 14px}
-.sheet .item{border-top:1px solid #ccc;padding:9px 0;display:grid;gap:2px}
-.sheet .item .h{font-family:var(--serif);font-weight:700;font-size:17px}
-.sheet .item .l{font-family:var(--lo);color:#23406b}
-.sheet .item .w{border-bottom:1px dotted #999;height:20px}
-.sheet .foot{color:#777;font-size:11px;margin-top:10px}
+.sheets{display:grid;gap:16px}
+.a4box{position:relative;width:100%;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:#fff}
+.a4{width:794px;height:1123px;background:#fff;color:#1a1a1a;padding:54px 62px 40px;display:flex;flex-direction:column;transform-origin:top left;font-family:var(--sans)}
+.a4 .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #23406b;padding-bottom:10px;margin-bottom:6px}
+.a4 h4{font-family:var(--serif);font-weight:900;font-size:34px;margin:0;letter-spacing:.06em;color:#23406b}
+.a4 .pg{font-size:15px;color:#666}
+.a4 .sub{font-size:17px;color:#333;margin:10px 0 4px}
+.a4 .item{flex:1;border-bottom:1px solid #ccc;padding:16px 0 10px;display:flex;flex-direction:column;gap:5px;min-height:0}
+.a4 .item:last-of-type{border-bottom:0}
+.a4 .h{font-family:var(--serif);font-weight:700;font-size:29px;line-height:1.35}
+.a4 .h b{color:#a8442e;margin-right:6px}
+.a4 .l{font-family:var(--lo);color:#23406b;font-size:19px}
+.a4 .m{font-size:17px}
+.a4 .q{font-size:17px;color:#a8442e;border:0;padding:0}
+.a4 .w{font-size:17px;margin-top:6px}
+.a4 .ln{border-bottom:1.5px dotted #888;height:34px}
+.a4 .empty{font-size:18px;color:#777;margin:auto}
+.a4 .foot{color:#777;font-size:13px;border-top:1px solid #ccc;padding-top:8px;display:flex;justify-content:space-between;gap:12px}
+.dl{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.dl .btn{font-size:16px}
+.dl-note{font-size:14px;color:var(--muted);margin:8px 0 0}
 
 .guide{display:grid;gap:20px}
 .guide section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px}
@@ -180,7 +193,10 @@ footer a{color:var(--indigo)}
   header.top,nav,.no-print,footer,.view:not(#v-lesson){display:none!important}
   #v-lesson .two{display:block}
   #v-lesson .panel:first-child{display:none}
-  .sheet{border:0;aspect-ratio:auto;padding:0;font-size:14px}
+  .a4box{border:0;height:auto!important;overflow:visible}
+  .a4{transform:none!important;break-after:page}
+  .sheets{display:block}
+  @page{size:A4;margin:0}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -265,8 +281,15 @@ footer a{color:var(--indigo)}
         </div>
       </div>
       <div>
-        <div class="sheet" id="sheet"></div>
-        <p class="count no-print" id="printNote">學習單是 A4 版面。要列印請在 GitHub Pages 版開啟。</p>
+        <div class="sheets" id="sheet"></div>
+        <div class="no-print">
+          <div class="dl" id="dlBtns">
+            <button class="btn" id="dlPdf" type="button">下載 PDF 學習單</button>
+            <button class="btn" id="dlPptA4" type="button">下載 PPT 學習單（A4，可改字）</button>
+            <button class="btn" id="dlPpt169" type="button">下載 PPT 投影片（16:9，一句一頁）</button>
+          </div>
+          <p class="dl-note" id="dlNote"></p>
+        </div>
       </div>
     </div>
   </section>
@@ -551,17 +574,101 @@ function initLesson(){
     if(b.dataset.a==='rm'){togglePick(id);renderLesson()}if(b.dataset.a==='play')play(byId[id])});
   $('#showLesson').onclick=()=>{const l=picked.map(id=>byId[id]).filter(Boolean);if(l.length)openStage(l,0)};
   const top=(()=>{try{return window.self===window.top}catch(e){return false}})();
-  $('#printBtn').hidden=!top;$('#printNote').hidden=top;
-  $('#printBtn').onclick=()=>window.print();
+  $('#printBtn').hidden=!top;$('#printBtn').onclick=()=>window.print();
+  const PAGES='https://mattsue1003.github.io/taigi-proverb-lessons/#lesson';
+  if(!top){$('#dlBtns').hidden=true;$('#dlNote').innerHTML=`列印與下載 PDF／PPT 請到 <a href="${PAGES}" target="_blank" rel="noopener">GitHub Pages 版</a>（這裡的瀏覽器不允許下載）。`}
+  else $('#dlNote').textContent='每頁 3 則。PPT 檔可在 PowerPoint、Keynote 或 Google 簡報打開修改文字。';
+  $('#dlPdf').onclick=()=>exportPDF();$('#dlPptA4').onclick=()=>exportPPT('a4');$('#dlPpt169').onclick=()=>exportPPT('169');
+  new ResizeObserver(fitSheets).observe($('#sheet'));
 }
 function renderLesson(){
   const l=picked.map(id=>byId[id]).filter(Boolean);
   $('#pickInfo').textContent=l.length?`已選 ${l.length} 則（建議 4～8 則）`:'還沒選。按「幫我挑 6 則」，或到「查俗諺」按「＋ 加入課程」。';
   $('#picked').innerHTML=l.map(i=>`<li><span class="t">${esc(i.han)}</span><span class="row" style="flex:none">${hasAudio(i)?`<button class="btn" data-a="play" data-id="${i.id}" type="button">▶</button>`:''}<button class="btn" data-a="rm" data-id="${i.id}" type="button" aria-label="移除">✕</button></span></li>`).join('');
   $('#showLesson').disabled=!l.length;
-  $('#sheet').innerHTML=`<h4>台語俗諺學習單</h4><p class="sub">姓名＿＿＿＿＿＿＿＿　日期＿＿＿＿＿＿＿＿</p>`+
-    (l.length?l.slice(0,8).map((i,k)=>`<div class="item"><div class="h">${k+1}．${esc(i.han)}</div><div class="l">${esc(i.lo)}</div><div>意思：${esc(i.mean)}</div><div>我的經驗：</div><div class="w"></div></div>`).join(''):'<p class="sub">選好俗諺後，這裡會出現 A4 學習單。</p>')+
-    `<p class="foot">我最喜歡的一句：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿　｜　資料來源：教育部臺灣台語常用詞辭典</p>`;
+  $('#sheet').innerHTML=pagesHTML(l);fitSheets();
+  ['#dlPdf','#dlPptA4','#dlPpt169'].forEach(k=>$(k).disabled=!l.length);
+}
+
+/* ---------- 學習單分頁與下載 ---------- */
+const PER=3;
+const chunk=l=>{const o=[];for(let i=0;i<l.length;i+=PER)o.push(l.slice(i,i+PER));return o};
+function pageHTML(items,p,n,start){
+  return `<div class="a4"><div class="hd"><h4>台語俗諺學習單</h4><span class="pg">第 ${p} / ${n} 頁</span></div>
+  <p class="sub">姓名＿＿＿＿＿＿＿＿＿＿　日期＿＿＿＿＿＿＿＿</p>
+  ${items.length?items.map((i,k)=>`<div class="item"><div class="h"><b>${start+k+1}</b>${esc(i.han)}</div><div class="l">${esc(i.lo)}</div><div class="m">意思：${esc(i.mean)}</div><div class="q">想一想：${esc(i.q)}</div><div class="w">我的經驗：</div><div class="ln"></div><div class="ln"></div></div>`).join(''):'<p class="empty">選好俗諺後，這裡會出現 A4 學習單。</p>'}
+  <div class="foot"><span>我最喜歡的一句：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿</span><span>資料：教育部臺灣台語常用詞辭典</span></div></div>`;
+}
+function pagesHTML(l){const c=l.length?chunk(l):[[]];return c.map((items,k)=>`<div class="a4box">${pageHTML(items,k+1,c.length,k*PER)}</div>`).join('')}
+function fitSheets(){document.querySelectorAll('#sheet .a4box').forEach(b=>{const s=b.clientWidth/794;const a=b.firstElementChild;a.style.transform=`scale(${s})`;b.style.height=(1123*s)+'px'})}
+const loaded={};
+function loadScript(u){return loaded[u]||(loaded[u]=new Promise((res,rej)=>{const t=document.createElement('script');t.src=u;t.onload=res;t.onerror=()=>rej(new Error('load'));document.head.appendChild(t)}))}
+const CDN={ppt:'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',h2c:'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',pdf:'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'};
+const lessonList=()=>picked.map(id=>byId[id]).filter(Boolean);
+function busy(btn,on,txt){if(on){btn.dataset.t=btn.textContent;btn.textContent=txt;btn.disabled=true}else{btn.textContent=btn.dataset.t;btn.disabled=false}}
+async function exportPDF(){
+  const l=lessonList();if(!l.length)return;const b=$('#dlPdf');busy(b,true,'產生 PDF 中…');
+  try{
+    await Promise.all([loadScript(CDN.h2c),loadScript(CDN.pdf)]);await document.fonts.ready;
+    const host=document.createElement('div');host.style.cssText='position:fixed;left:-9999px;top:0;width:794px';document.body.appendChild(host);
+    const c=chunk(l);host.innerHTML=c.map((it,k)=>pageHTML(it,k+1,c.length,k*PER)).join('');
+    const doc=new window.jspdf.jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    const pages=[...host.querySelectorAll('.a4')];
+    for(let k=0;k<pages.length;k++){const cv=await html2canvas(pages[k],{scale:2,backgroundColor:'#ffffff',useCORS:true});if(k)doc.addPage();doc.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',0,0,210,297)}
+    host.remove();doc.save('台語俗諺學習單.pdf');
+  }catch(e){$('#dlNote').textContent='PDF 產生失敗，請確認網路連線後再試一次。'}
+  busy(b,false);
+}
+async function exportPPT(kind){
+  const l=lessonList();if(!l.length)return;const b=kind==='a4'?$('#dlPptA4'):$('#dlPpt169');busy(b,true,'產生 PPT 中…');
+  try{
+    await loadScript(CDN.ppt);const P=new PptxGenJS();
+    const F='Microsoft JhengHei',FS='PMingLiU',FL='Times New Roman',IND='23406B',BR='A8442E',GR='555555';
+    if(kind==='a4'){
+      P.defineLayout({name:'A4P',width:8.27,height:11.69});P.layout='A4P';P.title='台語俗諺學習單';
+      const c=chunk(l);
+      c.forEach((items,pg)=>{
+        const s=P.addSlide();s.background={color:'FFFFFF'};
+        s.addText('台語俗諺學習單',{x:.6,y:.45,w:5,h:.6,fontFace:F,fontSize:26,bold:true,color:IND});
+        s.addText(`第 ${pg+1} / ${c.length} 頁`,{x:5.6,y:.55,w:2.07,h:.4,fontFace:F,fontSize:11,color:GR,align:'right'});
+        s.addShape(P.ShapeType.line,{x:.6,y:1.08,w:7.07,h:0,line:{color:IND,width:2.25}});
+        s.addText('姓名＿＿＿＿＿＿＿＿＿＿　日期＿＿＿＿＿＿＿＿',{x:.6,y:1.18,w:7.07,h:.4,fontFace:F,fontSize:13,color:'333333'});
+        items.forEach((i,k)=>{
+          const y=1.7+k*3.12;
+          s.addText([{text:String(pg*PER+k+1)+'  ',options:{color:BR,bold:true}},{text:i.han,options:{color:'1A1A1A',bold:true}}],{x:.6,y,w:7.07,h:.55,fontFace:F,fontSize:21,valign:'top'});
+          s.addText(i.lo,{x:.6,y:y+.58,w:7.07,h:.4,fontFace:FL,fontSize:14,color:IND});
+          s.addText('意思：'+i.mean,{x:.6,y:y+.98,w:7.07,h:.62,fontFace:F,fontSize:12.5,valign:'top'});
+          s.addText('想一想：'+i.q,{x:.6,y:y+1.6,w:7.07,h:.45,fontFace:F,fontSize:12.5,color:BR,valign:'top'});
+          s.addText('我的經驗：',{x:.6,y:y+2.05,w:7.07,h:.35,fontFace:F,fontSize:12.5});
+          [2.68,2.98].forEach(d=>s.addShape(P.ShapeType.line,{x:.6,y:y+d,w:7.07,h:0,line:{color:'999999',width:.75,dashType:'sysDot'}}));
+          if(k<items.length-1)s.addShape(P.ShapeType.line,{x:.6,y:y+3.07,w:7.07,h:0,line:{color:'CCCCCC',width:.75}});
+        });
+        s.addShape(P.ShapeType.line,{x:.6,y:11.05,w:7.07,h:0,line:{color:'CCCCCC',width:.75}});
+        s.addText('我最喜歡的一句：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿',{x:.6,y:11.1,w:4.6,h:.35,fontFace:F,fontSize:10,color:'777777'});
+        s.addText('資料：教育部臺灣台語常用詞辭典',{x:5.1,y:11.1,w:2.57,h:.35,fontFace:F,fontSize:10,color:'777777',align:'right'});
+      });
+      await P.writeFile({fileName:'台語俗諺學習單.pptx'});
+    }else{
+      P.layout='LAYOUT_WIDE';P.title='台語俗諺投影片';
+      const t=P.addSlide();t.background={color:IND};
+      t.addText('台語俗諺',{x:.8,y:2.3,w:11.7,h:1.3,fontFace:F,fontSize:54,bold:true,color:'FFFFFF',align:'center'});
+      t.addText(`今天 ${l.length} 句俗諺　｜　資料：教育部臺灣台語常用詞辭典`,{x:.8,y:3.8,w:11.7,h:.6,fontFace:F,fontSize:20,color:'CFDAEA',align:'center'});
+      l.forEach((i,k)=>{
+        const s=P.addSlide();s.background={color:'F3F1EC'};
+        s.addText(`${k+1} / ${l.length}　${CATS[i.cat]}`,{x:.5,y:.3,w:6,h:.4,fontFace:F,fontSize:14,color:GR});
+        s.addText(i.han,{x:.6,y:1.05,w:12.1,h:2.1,fontFace:F,fontSize:i.han.length>14?42:56,bold:true,color:'1F2633',align:'center',valign:'middle',fit:'shrink'});
+        s.addText(i.lo,{x:.6,y:3.25,w:12.1,h:.7,fontFace:FL,fontSize:24,color:IND,align:'center'});
+        s.addText(i.mean,{x:1.2,y:4.25,w:10.9,h:1.45,fontFace:F,fontSize:26,color:'1F2633',align:'center',valign:'middle',fill:{color:'FFFFFF'},line:{color:'D9D5CC',width:1},rectRadius:.15,shape:P.ShapeType.roundRect});
+        s.addText('聊一聊：'+i.q,{x:.9,y:6.0,w:11.5,h:.9,fontFace:F,fontSize:24,color:BR,align:'center',valign:'middle'});
+        s.addNotes(`${i.han}\n${i.lo}\n意思：${i.mean}\n帶領提問：${i.q}`);
+      });
+      const e=P.addSlide();e.background={color:'F3F1EC'};
+      e.addText('您最喜歡哪一句？',{x:.8,y:2.4,w:11.7,h:1.2,fontFace:F,fontSize:48,bold:true,color:IND,align:'center'});
+      e.addText('回家說給家人聽',{x:.8,y:3.7,w:11.7,h:.8,fontFace:F,fontSize:28,color:BR,align:'center'});
+      await P.writeFile({fileName:'台語俗諺投影片.pptx'});
+    }
+  }catch(e){$('#dlNote').textContent='PPT 產生失敗，請確認網路連線後再試一次。'}
+  busy(b,false);
 }
 })();
 </script>
