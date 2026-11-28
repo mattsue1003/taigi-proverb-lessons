@@ -674,43 +674,55 @@ async function exportPPT(kind){
       const c=chunk(l);
       c.forEach((items,pg)=>{
         const s=P.addSlide();s.background={color:'FFFFFF'};
-        s.addText('台語俗諺學習單',{x:.6,y:.45,w:5,h:.6,fontFace:F,fontSize:26,bold:true,color:IND});
-        s.addText(`第 ${pg+1} / ${c.length} 頁`,{x:5.6,y:.55,w:2.07,h:.4,fontFace:F,fontSize:11,color:GR,align:'right'});
+        s.addText('台語俗諺學習單',{x:.6,y:.4,w:5,h:.65,fontFace:F,fontSize:32,bold:true,color:IND});
+        s.addText(`第 ${pg+1} / ${c.length} 頁`,{x:5.6,y:.55,w:2.07,h:.4,fontFace:F,fontSize:14,color:GR,align:'right'});
         s.addShape(P.ShapeType.line,{x:.6,y:1.08,w:7.07,h:0,line:{color:IND,width:2.25}});
-        s.addText('姓名＿＿＿＿＿＿＿＿＿＿　日期＿＿＿＿＿＿＿＿',{x:.6,y:1.18,w:7.07,h:.4,fontFace:F,fontSize:13,color:'333333'});
+        s.addText('姓名＿＿＿＿＿＿＿＿＿＿　日期＿＿＿＿＿＿＿＿',{x:.6,y:1.16,w:7.07,h:.45,fontFace:F,fontSize:16,color:'333333'});
         items.forEach((i,k)=>{
           const y=1.7+k*3.12;
-          s.addText([{text:String(pg*PER+k+1)+'  ',options:{color:BR,bold:true}},{text:i.han,options:{color:'1A1A1A',bold:true}}],{x:.6,y,w:7.07,h:.55,fontFace:F,fontSize:21,valign:'top'});
-          s.addText(i.lo,{x:.6,y:y+.58,w:7.07,h:.4,fontFace:FL,fontSize:14,color:IND});
-          s.addText('意思：'+i.mean,{x:.6,y:y+.98,w:7.07,h:.62,fontFace:F,fontSize:12.5,valign:'top'});
-          s.addText('想一想：'+i.q,{x:.6,y:y+1.6,w:7.07,h:.45,fontFace:F,fontSize:12.5,color:BR,valign:'top'});
-          s.addText('我的經驗：',{x:.6,y:y+2.05,w:7.07,h:.35,fontFace:F,fontSize:12.5});
-          [2.68,2.98].forEach(d=>s.addShape(P.ShapeType.line,{x:.6,y:y+d,w:7.07,h:0,line:{color:'999999',width:.75,dashType:'sysDot'}}));
+          s.addText([{text:String(pg*PER+k+1)+'  ',options:{color:BR,bold:true}},{text:i.han,options:{color:'1A1A1A',bold:true}}],{x:.6,y,w:7.07,h:.6,fontFace:F,fontSize:i.han.length>16?24:27,valign:'top'});
+          s.addText(i.lo,{x:.6,y:y+.6,w:7.07,h:.42,fontFace:FL,fontSize:i.lo.length>52?14:i.lo.length>44?16:18,color:IND});
+          s.addText('意思：'+i.mean,{x:.6,y:y+1.0,w:7.07,h:.78,fontFace:F,fontSize:i.mean.length>56?14:16,valign:'top'});
+          s.addText('想一想：'+i.q,{x:.6,y:y+1.78,w:7.07,h:.42,fontFace:F,fontSize:16,bold:true,color:BR,valign:'top'});
+          s.addText('我的經驗：',{x:.6,y:y+2.2,w:7.07,h:.38,fontFace:F,fontSize:16});
+          [2.7,2.98].forEach(d=>s.addShape(P.ShapeType.line,{x:.6,y:y+d,w:7.07,h:0,line:{color:'999999',width:.75,dashType:'sysDot'}}));
           if(k<items.length-1)s.addShape(P.ShapeType.line,{x:.6,y:y+3.07,w:7.07,h:0,line:{color:'CCCCCC',width:.75}});
         });
         s.addShape(P.ShapeType.line,{x:.6,y:11.05,w:7.07,h:0,line:{color:'CCCCCC',width:.75}});
-        s.addText('我最喜歡的一句：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿',{x:.6,y:11.1,w:4.6,h:.35,fontFace:F,fontSize:10,color:'777777'});
-        s.addText('資料：教育部臺灣台語常用詞辭典',{x:5.1,y:11.1,w:2.57,h:.35,fontFace:F,fontSize:10,color:'777777',align:'right'});
+        s.addText('我最喜歡的一句：＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿',{x:.6,y:11.1,w:4.6,h:.38,fontFace:F,fontSize:13,color:'666666'});
+        s.addText('資料：教育部臺灣台語常用詞辭典',{x:4.6,y:11.1,w:3.07,h:.38,fontFace:F,fontSize:12,color:'666666',align:'right'});
       });
       await P.writeFile({fileName:'台語俗諺學習單.pptx'});
     }else{
       P.layout='LAYOUT_WIDE';P.title='台語俗諺投影片';
+      // 依字數算字級：cw=每字寬（字級的倍數），在 w×h 內最多 lines 行
+      const fitPt=(n,w,h,max,min,lines,cw=1,lh=1.22)=>{for(let pt=max;pt>min;pt-=2){const per=Math.max(1,Math.floor(w*72/(pt*cw)));const ln=Math.ceil(n/per);if(ln<=lines&&ln*pt*lh/72<=h)return pt}return min};
+      const band=(sl,y)=>[['E04A44',0],['3A7CC8',.12],['43A85A',.24]].forEach(([c,o])=>sl.addShape(P.ShapeType.rect,{x:0,y:y+o,w:13.33,h:.1,fill:{color:c},line:{color:c,width:0}}));
       const t=P.addSlide();t.background={color:IND};
-      t.addText('台語俗諺',{x:.8,y:2.3,w:11.7,h:1.3,fontFace:F,fontSize:54,bold:true,color:'FFFFFF',align:'center'});
-      t.addText(`今天 ${l.length} 句俗諺　｜　資料：教育部臺灣台語常用詞辭典`,{x:.8,y:3.8,w:11.7,h:.6,fontFace:F,fontSize:20,color:'CFDAEA',align:'center'});
+      t.addText('台語俗諺',{x:.6,y:1.15,w:12.13,h:2.3,fontFace:F,fontSize:132,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+      t.addText(`今天 ${l.length} 句俗諺`,{x:.6,y:3.75,w:12.13,h:1.0,fontFace:F,fontSize:48,bold:true,color:'FFFFFF',align:'center',valign:'middle'});
+      t.addText('資料：教育部臺灣台語常用詞辭典',{x:.6,y:4.95,w:12.13,h:.75,fontFace:F,fontSize:30,color:'CFDAEA',align:'center',valign:'middle'});
+      band(t,6.9);
       l.forEach((i,k)=>{
         const s=P.addSlide();s.background={color:'F6F4EE'};
-        s.addText(`${k+1} / ${l.length}　${CATS[i.cat]}`,{x:.5,y:.3,w:6,h:.4,fontFace:F,fontSize:14,color:GR});
-        s.addText(i.han,{x:.6,y:1.05,w:12.1,h:2.1,fontFace:F,fontSize:i.han.length>14?42:56,bold:true,color:'1F2633',align:'center',valign:'middle',fit:'shrink'});
-        s.addText(i.lo,{x:.6,y:3.25,w:12.1,h:.7,fontFace:FL,fontSize:24,color:IND,align:'center'});
-        s.addText(i.mean,{x:1.2,y:4.25,w:10.9,h:1.45,fontFace:F,fontSize:26,color:'1F2633',align:'center',valign:'middle',fill:{color:'FFFFFF'},line:{color:'D9D5CC',width:1},rectRadius:.15,shape:P.ShapeType.roundRect});
-        s.addText('聊一聊：'+i.q,{x:.9,y:6.0,w:11.5,h:.9,fontFace:F,fontSize:24,color:BR,align:'center',valign:'middle'});
-        [['E04A44',0],['3A7CC8',.12],['43A85A',.24]].forEach(([c,o])=>s.addShape(P.ShapeType.rect,{x:0,y:7.14+o,w:13.33,h:.1,fill:{color:c},line:{color:c,width:0}}));
+        s.addText(`${k+1} / ${l.length}　${CATS[i.cat]}`,{x:.5,y:.2,w:8,h:.5,fontFace:F,fontSize:20,color:GR});
+        // 一行放得下就一行；放不下就在最靠中間的逗號（或「──」前）分兩行，不讓一兩個字掉到下一行
+        let hanT=i.han,hanPt=fitPt(i.han.length,12.0,1.3,104,40,1);
+        if(hanPt<76){const cuts=[];[...i.han].forEach((c,j,a)=>{if('，；'.includes(c))cuts.push(j+1);if(c==='─'&&a[j-1]!=='─')cuts.push(j)});
+          if(cuts.length){const m=i.han.length/2,c=cuts.reduce((x,y)=>Math.abs(y-m)<Math.abs(x-m)?y:x);const L1=i.han.slice(0,c),L2=i.han.slice(c);
+            hanT=[{text:L1,options:{breakLine:true}},{text:L2}];hanPt=Math.min(74,fitPt(Math.max(L1.length,L2.length),12.0,1.3,104,40,1))}
+          else hanPt=fitPt(i.han.length,12.0,2.4,104,40,2)}
+        s.addText(hanT,{x:.5,y:.65,w:12.33,h:2.5,fontFace:F,fontSize:hanPt,bold:true,color:'1F2633',align:'center',valign:'middle',lineSpacingMultiple:1.0});
+        s.addText(i.lo,{x:.5,y:3.15,w:12.33,h:1.0,fontFace:FL,fontSize:fitPt(i.lo.length,12.0,.98,38,18,2,.5),color:IND,align:'center',valign:'middle'});
+        s.addText(i.mean,{x:.9,y:4.25,w:11.53,h:1.85,fontFace:F,fontSize:fitPt(i.mean.length,10.9,1.7,42,20,3),color:'1F2633',align:'center',valign:'middle',fill:{color:'FFFFFF'},line:{color:'D9D5CC',width:1},rectRadius:.15,shape:P.ShapeType.roundRect});
+        s.addText('聊一聊：'+i.q,{x:.5,y:6.15,w:12.33,h:.95,fontFace:F,fontSize:fitPt(i.q.length+4,12.0,.92,36,20,2),bold:true,color:BR,align:'center',valign:'middle'});
+        band(s,7.14);
         s.addNotes(`${i.han}\n${i.lo}\n意思：${i.mean}\n帶領提問：${i.q}`);
       });
       const e=P.addSlide();e.background={color:'F6F4EE'};
-      e.addText('您最喜歡哪一句？',{x:.8,y:2.4,w:11.7,h:1.2,fontFace:F,fontSize:48,bold:true,color:IND,align:'center'});
-      e.addText('回家說給家人聽',{x:.8,y:3.7,w:11.7,h:.8,fontFace:F,fontSize:28,color:BR,align:'center'});
+      e.addText('您最喜歡哪一句？',{x:.5,y:1.5,w:12.33,h:2.0,fontFace:F,fontSize:88,bold:true,color:IND,align:'center',valign:'middle'});
+      e.addText('回家說給家人聽',{x:.5,y:3.9,w:12.33,h:1.3,fontFace:F,fontSize:56,bold:true,color:BR,align:'center',valign:'middle'});
+      band(e,7.14);
       await P.writeFile({fileName:'台語俗諺投影片.pptx'});
     }
   }catch(e){$('#dlNote').textContent='PPT 產生失敗，請確認網路連線後再試一次。'}
